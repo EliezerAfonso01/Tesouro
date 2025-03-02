@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caça ao Tesouro Romântica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: #e83a82;
+            --primary-dark: #d32e73;
+            --secondary: #ff9fb4;
+            --secondary-dark: #ff8ca6;
+            --accent: #7c2855;
+            --background: #fff8fa;
+            --text: #4a2535;
+            --light: #fff2f6;
+            --white: #ffffff;
+        }
+        
+        body {
+            background-color: var(--background);
+            background-image: url('https://cdnjs.cloudflare.com/ajax/libs/patternify/1.0.0/img/pattern.png'), url('/api/placeholder/800/600');
+            background-size: 10px, cover;
+            background-repeat: repeat, no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+            transform: translateY(0);
+            animation: float 6s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, var(--primary), var(--accent), var(--secondary));
+            border-radius: 4px 4px 0 0;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary);
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: 2px;
+        }
+        
+        h1 i {
+            margin: 0 10px;
+            color: var(--primary);
+        }
+        
+        h2 {
+            color: var(--text);
+            margin-bottom: 15px;
+            font-weight: 600;
+            position: relative;
+            padding-left: 25px;
+            display: inline-block;
+        }
+        
+        h2 i {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            color: var(--primary);
+        }
+        
+        .welcome-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .welcome-image {
+            width: 180px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .welcome-screen p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: var(--text);
+        }
+        
+        .button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+        
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .button:hover::before {
+            left: 100%;
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        .game-screen {
+            display: none;
+        }
+        
+        .clue-container {
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: var(--light);
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .clue-container::after {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 60px;
+            color: rgba(232, 58, 130, 0.1);
+            font-family: Georgia, serif;
+        }
+        
+        .clue-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: var(--text);
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .clue-text::before {
+            content: '\f004';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 3px;
+            color: var(--primary);
+        }
+        
+        .answer-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        .answer-input {
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .input-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: all 0.3s ease;
+        }
+        
+        .answer-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232, 58, 130, 0.25);
+            outline: none;
+        }
+        
+        .answer-input:focus + i {
+            color: var(--primary);
+        }
+        
+        .answer-input.shake {
+            animation: shake 0.5s;
+        }
+        
+        .answer-input.success {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .progress-tracker {
+            margin-top: 30px;
+            text-align: center;
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .progress-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.8s ease;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%
+            );
+            background-size: 20px 20px;
+            animation: move-stripes 1s linear infinite;
+        }
+        
+        @keyframes move-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 0; }
+        }
+        
+        .clue-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            align-items: center;
+        }
+        
+        .hint-button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hint-button:hover {
+            background-color: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .attempt-counter {
+            background-color: rgba(232, 58, 130, 0.1);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .hint-text {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: rgba(255, 159, 180, 0.15);
+            border-left: 3px solid var(--secondary);
+            font-style: italic;
+            border-radius: 0 10px 10px 0;
+            position: relative;
+            padding-left: 35px;
+            animation: fadeIn 0.5s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hint-text::before {
+            content: '\f0eb';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 10px;
+            top: 15px;
+            color: var(--secondary);
+        }
+        
+        .victory-screen {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .time-travel-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            overflow: hidden;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gallery-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            background-size: contain; /* Garante que a imagem toda apareça */
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        .slide-active {
+            opacity: 1;
+        }
+        
+        .time-travel-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 30%, rgba(0, 0, 0, 0.9) 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .time-travel-effect.active {
+            opacity: 1;
+            animation: zoomEffect 2s forwards;
+        }
+        
+        @keyframes zoomEffect {
+            0% { transform: scale(1); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
+        .video-container {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+            margin: 30px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .final-message {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 15px;
+            border: 2px dashed var(--primary);
+            position: relative;
+            animation: pulse 2s infinite;
+            margin-bottom: 30px;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(232, 58, 130, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(232, 58, 130, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(232, 58, 130, 0); }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f2d74e;
+            position: absolute;
+            top: 0;
+            opacity: 0;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .button {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .clue-container {
+                padding: 20px;
+            }
+            
+            .welcome-image {
+                width: 140px;
+            }
+            
+            .time-travel-container {
+                height: 300px;
+            }
+        }
+        
+        .heart-icon {
+            color: var(--primary);
+            margin: 0 5px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-heart"></i> Nossa História de Amor <i class="fas fa-heart"></i></h1>
+        
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <img src="img/coracao.png" alt="Coração" class="welcome-image">
+            <p><i class="fas fa-map-marked-alt"></i> Olá, meu amor! Preparei uma aventura especial para você. Nesta caça ao tesouro, você precisará responder 12 perguntas sobre nossa história juntos. Cada resposta correta nos levará mais perto de uma surpresa especial. Está pronta para reviver momentos marcantes do nosso relacionamento?</p>
+            <button class="button" id="startButton"><i class="fas fa-heart"></i> Começar Nossa Jornada</button>
+        </div>
+        
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="clue-container">
+                <h2><i class="fas fa-heart"></i> <span id="clueTitle">Pergunta 1</span></h2>
+                <p class="clue-text" id="clueText">Carregando pergunta...</p>
+                
+                <div class="answer-form">
+                    <div class="input-container">
+                        <input type="text" class="answer-input" id="answerInput" placeholder="Digite sua resposta aqui">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <button class="button" id="submitAnswer"><i class="fas fa-check-circle"></i> Verificar</button>
+                </div>
+                
+                <div class="hint-text" id="hintText">Esta é uma dica para ajudar você.</div>
+                
+                <div class="clue-navigation">
+                    <button class="hint-button" id="hintButton"><i class="fas fa-info-circle"></i> Mostrar Dica</button>
+                    <div class="attempt-counter" id="attemptCounter"><i class="fas fa-redo-alt"></i> Tentativas: 0</div>
+                </div>
+            </div>
+            
+            <div class="progress-tracker">
+                <div class="progress-title">
+                    <i class="fas fa-heart"></i> Nosso Progresso:
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p id="progressText">0/12 perguntas respondidas</p>
+            </div>
+        </div>
+        
+        <!-- Victory Screen -->
+        <div class="victory-screen" id="victoryScreen">
+            <h2><i class="fas fa-heart"></i> Parabéns, meu amor!</h2>
+            <p>Você completou nossa caça ao tesouro especial! Agora vamos fazer uma viagem no tempo por alguns dos nossos momentos juntos...</p>
+            
+            <div class="time-travel-container" id="timeTravelContainer">
+                <!-- As imagens serão adicionadas pelo JavaScript -->
+                <div class="time-travel-effect" id="timeTravelEffect">
+                    Viajando no tempo...
+                </div>
+            </div>
+            
+            <div class="video-container" id="videoContainer">
+                <video id="finalVideo" controls>
+                    <!-- Adicione seu vídeo aqui -->
+                    <source src="Ed_Sheeran.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeos HTML5.
+                </video>
+            </div>
+            
+            <div class="final-message" id="finalMessage">
+                <h3>Para o amor da minha vida <i class="fas fa-heart heart-icon"></i></h3>
+                <p id="finalMessageText">Mensagem personalizada aqui...</p>
+            </div>
+            
+            <button class="button" id="playAgainButton"><i class="fas fa-redo"></i> Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Game variables
+            const clues = [
+                {
+                    title: "Pergunta 1 (Uma Palavra)",
+                    text: "Qual foi o local do nosso primeiro encontro?",
+                    answer: "Kilamba", // Substitua com a resposta correta
+                    hint: "A primeira vez que te vi pessoalmente"
+                },
+                {
+                    title: "Pergunta 2 (Uma Palavra)",
+                    text: "Onde foi o local que te pedi em namoro?",
+                    answer: "Ilha", // Substitua com a resposta correta
+                    hint: "Ainda iam nos apanhar..."
+                },
+                {
+                    title: "Pergunta 3 (Duas Palavras)",
+                    text: "Qual é a minha comida favorita que você cozinha?",
+                    answer: "Arroz doce", // Substitua com a resposta correta
+                    hint: "Leva muito leite..."
+                },
+                {
+                    title: "Pergunta 4 (Uma Palavra)",
+                    text: "Qual foi o primeiro restaurante que fomos juntos?",
+                    answer: "Jardim", // Substitua com a resposta correta
+                    hint: "Teus padrinhos iam nos encontrar por pouco..."
+                },
+                {
+                    title: "Pergunta 5 (Uma Palavra)",
+                    text: "Qual é a cor do vestido que mais gosto de te ver usar?",
+                    answer: "Verde", // Substitua com a resposta correta
+                    hint: "Você usa até hoje..."
+                },
+                {
+                    title: "Pergunta 6 (Uma Palavra)",
+                    text: "Qual foi o nosso primeiro casamento junto? (Nome da Amiga)",
+                    answer: "Arcangela", // Substitua com a resposta correta
+                    hint: "Estavas com um vestido laranja de matar ..."
+                },
+                {
+                    title: "Pergunta 7 (Uma Palavra)",
+                    text: "Qual foi nossa primeira viagem juntos?",
+                    answer: "Dimba", // Substitua com a resposta correta
+                    hint: "Tinha uma Tia Artilheira de combate..."
+                },
+                {
+                    title: "Pergunta 8 (Uma Palavra)",
+                    text: "Qual é o meu apelido carinhoso para você?",
+                    answer: "Zany", // Substitua com a resposta correta
+                    hint: "No esquecido mas bonito..."
+                },
+                {
+                    title: "Pergunta 9 (Uma Palavra)",
+                    text: "Que tipo de bolo você me ofereceu primeiro?",
+                    answer: "Chocolate", // Substitua com a resposta correta
+                    hint: "A Pérola comeu metade..."
+                },
+                {
+                    title: "Pergunta 10 (Quatro Palavra)",
+                    text: "Qual foi o tema do nosso primeiro congresso juntos?",
+                    answer: "Declare as boas novas", // Substitua com a resposta correta
+                    hint: "Sempre ligo nesse dia na hora errada..."
+                },
+                {
+                    title: "Pergunta 11 (Uma Palavra)",
+                    text: "Qual é o neto favorito da avô Suzana?",
+                    answer: "Eliézer", // Substitua com a resposta correta
+                    hint: "Te apanhei, ainda bem que sabes que sou eu..."
+                },
+                {
+                    title: "Pergunta 12",
+                    text: "Complete a frase: 'Eu te amo porque...'",
+                    answer: "você é a minha representação de um Girasol", // Substitua com a resposta correta
+                    hint: "você é a minha representação de um (subtitua pela planta que mais amas)..."
+                }
+            ];         
+
+            // Imagens para a viagem no tempo (substitua pelos URLs das suas fotos)
+             const timelineImages = [
+                "img/1.jpg",
+                "img/2.jpg",
+                "img/3.jpg",
+                "img/4.jpg",
+                "img/5.jpg",
+                "img/6.jpg",
+                "img/7.jpg",
+                "img/8.jpg",
+                "img/9.jpg",
+                "img/10.jpg",
+                "img/11.jpg",
+                "img/12.jpg",
+                "img/13.jpg",
+                "img/14.jpg",
+                "img/15.jpg",
+                "img/16.jpg",
+                "img/17.jpg",
+                "img/18.jpg",
+            ];
+            
+            // Mensagem final personalizada
+            const finalMessageText = "Cada momento ao seu lado é um tesouro para mim. Obrigado por compartilhar sua vida comigo e por me fazer a pessoa mais feliz do mundo. Você é o amor da minha vida e quero construir muitas mais memórias ao seu lado. Te amo infinitamente! ❤️";
+            
+            let currentClueIndex = 0;
+            let attempts = 0;
+            let totalAttempts = 0;
+            
+            // DOM Elements
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const gameScreen = document.getElementById('gameScreen');
+            const victoryScreen = document.getElementById('victoryScreen');
+            const startButton = document.getElementById('startButton');
+            const clueTitle = document.getElementById('clueTitle');
+            const clueText = document.getElementById('clueText');
+            const answerInput = document.getElementById('answerInput');
+            const submitAnswerButton = document.getElementById('submitAnswer');
+            const hintButton = document.getElementById('hintButton');
+            const hintText = document.getElementById('hintText');
+            const attemptCounter = document.getElementById('attemptCounter');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const playAgainButton = document.getElementById('playAgainButton');
+            const timeTravelContainer = document.getElementById('timeTravelContainer');
+            const videoContainer = document.getElementById('videoContainer');
+            const finalMessage = document.getElementById('finalMessage');
+            const finalMessageElement = document.getElementById('finalMessageText');
+            const timeTravelEffect = document.getElementById('timeTravelEffect');
+            
+            // Event Listeners
+            startButton.addEventListener('click', startGame);
+            submitAnswerButton.addEventListener('click', checkAnswer);
+            hintButton.addEventListener('click', toggleHint);
+            playAgainButton.addEventListener('click', resetGame);
+            
+            answerInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+            
+            // Game Functions
+            function startGame() {
+                welcomeScreen.style.display = 'none';
+                gameScreen.style.display = 'block';
+                
+                loadClue(currentClueIndex);
+                
+                // Add entrance animation
+                gameScreen.classList.add('fade-in');
+            }
+            
+            function loadClue(index) {
+                const clue = clues[index];
+                clueTitle.textContent = clue.title;
+                clueText.textContent = clue.text;
+                hintText.textContent = clue.hint;
+                hintText.style.display = 'none';
+                attempts = 0;
+                updateAttemptCounter();
+                answerInput.value = '';
+                answerInput.focus();
+                
+                // Add animation to clue container
+                const clueContainer = document.querySelector('.clue-container');
+                clueContainer.classList.add('pulse');
+                setTimeout(() => {
+                    clueContainer.classList.remove('pulse');
+                }, 500);
+            }
+            
+            function checkAnswer() {
+    const userAnswer = answerInput.value.trim().toLowerCase(); 
+    const correctAnswer = clues[currentClueIndex].answer.trim().toLowerCase(); 
+    
+    console.log("User Answer:", userAnswer);  // Exibir resposta digitada no console
+    console.log("Correct Answer:", correctAnswer); // Exibir resposta correta no console
+    console.log("Comparison Result:", userAnswer === correctAnswer); // Mostrar se a comparação retorna true ou false
+
+    attempts++;
+    totalAttempts++;
+    updateAttemptCounter();
+    
+    if (userAnswer === correctAnswer) {  
+        // Resposta correta
+        answerInput.classList.add('success');
+        setTimeout(() => {
+            answerInput.classList.remove('success');
+        }, 1000);
+
+        currentClueIndex++;
+        updateProgress();
+
+        if (currentClueIndex < clues.length) {
+            // Carrega próxima dica
+            setTimeout(() => {
+                loadClue(currentClueIndex);
+            }, 800);
+        } else {
+            // Finaliza o jogo
+            endGame();
+        }
+    } else {
+        console.log("Resposta errada!");
+
+        // Animação para resposta errada
+        answerInput.classList.add('shake');
+        setTimeout(() => {
+            answerInput.classList.remove('shake');
+        }, 500);
+
+        // Exibe a dica após 3 tentativas erradas
+        if (attempts === 3 && hintText.style.display === 'none') {
+            toggleHint();
+        }
+    }
+}
+
+            function toggleHint() {
+                if (hintText.style.display === 'none') {
+                    hintText.style.display = 'block';
+                    hintButton.innerHTML = '<i class="fas fa-info-circle"></i> Esconder Dica';
+                } else {
+                    hintText.style.display = 'none';
+                    hintButton.innerHTML = '<i class="fas fa-info-circle"></i> Mostrar Dica';
+                }
+            }
+            
+            function updateAttemptCounter() {
+                attemptCounter.innerHTML = `<i class="fas fa-redo-alt"></i> Tentativas: ${attempts}`;
+            }
+            
+            function updateProgress() {
+                const percentage = (currentClueIndex / clues.length) * 100;
+                progressFill.style.width = `${percentage}%`;
+                progressText.textContent = `${currentClueIndex}/${clues.length} perguntas respondidas`;
+            }
+            
+            function endGame() {
+                gameScreen.style.display = 'none';
+                victoryScreen.style.display = 'block';
+                
+                setupTimelineImages();
+                
+                // Start time travel effect
+                setTimeout(() => {
+                    startTimeTravelEffect();
+                }, 1500);
+            }
+            
+            function setupTimelineImages() {
+                // Clear container
+                timeTravelContainer.innerHTML = '';
+                
+                // Re-add time travel effect
+                const effectDiv = document.createElement('div');
+                effectDiv.id = 'timeTravelEffect';
+                effectDiv.className = 'time-travel-effect';
+                timeTravelContainer.appendChild(effectDiv);
+                
+                // Add slides
+                timelineImages.forEach((imgSrc, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'gallery-slide';
+                    slide.style.backgroundImage = `url(${imgSrc})`;
+                    slide.dataset.index = index;
+                    timeTravelContainer.appendChild(slide);
+                });
+            }
+            
+            function startTimeTravelEffect() {
+                let currentSlide = 0;
+                const slides = document.querySelectorAll('.gallery-slide');
+                const effect = document.getElementById('timeTravelEffect');
+                
+                // Show first slide
+                slides[0].classList.add('slide-active');
+                
+                // Start slideshow with time travel effect between slides
+                const slideInterval = setInterval(() => {
+                    // Hide current slide
+                    slides[currentSlide].classList.remove('slide-active');
+                    
+                    // Show time travel effect
+                    effect.classList.add('active');
+                    
+                    setTimeout(() => {
+                        // Hide effect
+                        effect.classList.remove('active');
+                        
+                        // Move to next slide
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        
+                        // Show next slide
+                        slides[currentSlide].classList.add('slide-active');
+                        
+                        // If we've gone through all slides, stop and show video
+                        if (currentSlide === 0) {
+                            clearInterval(slideInterval);
+                            setTimeout(showFinalVideo, 1000);
+                        }
+                    }, 1000);
+                }, 3000);
+            }
+            
+            function showFinalVideo() {
+                // Hide time travel container and show video
+                timeTravelContainer.style.display = 'none';
+                videoContainer.style.display = 'block';
+                
+                // Play video
+                const video = document.getElementById('finalVideo');
+                video.play();
+                
+                // Show final message after video ends
+                video.onended = function() {
+                    finalMessage.style.display = 'block';
+                    finalMessageElement.textContent = finalMessageText;
+                    createConfetti();
+                };
+            }
+            
+            function resetGame() {
+                currentClueIndex = 0;
+                attempts = 0;
+                totalAttempts = 0;
+                
+                // Reset screens
+                victoryScreen.style.display = 'none';
+                timeTravelContainer.style.display = 'block';
+                videoContainer.style.display = 'none';
+                finalMessage.style.display = 'none';
+                
+                // Reset video
+                const video = document.getElementById('finalVideo');
+                video.pause();
+                video.currentTime = 0;
+                
+                // Go back to welcome screen
+                welcomeScreen.style.display = 'block';
+            }
+            
+            function createConfetti() {
+                const container = document.querySelector('.container');
+                const colors = ['#e83a82', '#ff9fb4', '#ffd700', '#87ceeb', '#7c2855', '#4a2535'];
+                
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = Math.random() * 10 + 5 + 'px';
+                    confetti.style.opacity = Math.random() + 0.5;
+                    confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                    
+                    container.appendChild(confetti);
+                    
+                    // Animate confetti
+                    const animation = confetti.animate(
+                        [
+                            { transform: 'translate3d(0, 0, 0) rotate(0deg)', opacity: 1 },
+                            { transform: 'translate3d(' + (Math.random() * 100 - 50) + 'px, ' + (Math.random() * 600 + 200) + 'px, 0) rotate(' + Math.random() * 360 + 'deg)', opacity: 0 }
+                        ],
+                        {
+                            duration: Math.random() * 3000 + 2000,
+                            easing: 'cubic-bezier(0, .9, .57, 1)',
+                            delay: Math.random() * 2000
+                        }
+                    );
+                    
+                    animation.onfinish = function() {
+                        confetti.remove();
+                    };
+                }
+            }
+            
+            // Opcional: Personalize as perguntas e respostas
+            function customizeQuestions() {
+                // Exemplo de como personalizar as perguntas
+                // Substitua estes valores com os dados do seu relacionamento
+                clues[0].text = "Qual foi o local do nosso primeiro encontro?";
+                clues[0].answer = "cinema"; // Exemplo
+                clues[0].hint = "Lembra que assistimos aquele filme de comédia...";
+                
+                // Continue personalizando as outras perguntas
+            }
+            
+            // Opcional: Função para carregar suas fotos
+            function loadPersonalImages() {
+    // Substitua estes URLs com os links para suas fotos reais
+    // Você pode hospedar as imagens em serviços como Google Photos ou Imgur
+    timelineImages[0] = "img/1.jpg"; // Primeiro encontro
+    timelineImages[1] = "img/2.jpg"; // Primeiro beijo
+    timelineImages[2] = "img/3.jpg"; // Aniversário
+    timelineImages[3] = "img/4.jpg"; // Viagem
+    timelineImages[4] = "img/5.jpg"; // Natal juntos
+    timelineImages[5] = "img/6.jpg"; // Momento especial
+    timelineImages[6] = "img/7.jpg"; // Primeiro encontro
+    timelineImages[7] = "img/8.jpg"; // Primeiro beijo
+    timelineImages[8] = "img/9.jpg"; // Aniversário
+    timelineImages[9] = "img/10.jpg"; // Viagem
+    timelineImages[10] = "img/11.jpg"; // Natal juntos
+    timelineImages[11] = "img/12.jpg"; // Momento especial
+    timelineImages[12] = "img/13.jpg"; // Primeiro encontro
+    timelineImages[13] = "img/14.jpg"; // Primeiro beijo
+    timelineImages[14] = "img/15.jpg"; // Aniversário
+    timelineImages[15] = "img/16.jpg"; // Viagem
+    timelineImages[16] = "img/17.jpg"; // Natal juntos
+    timelineImages[17] = "img/18.jpg"; // Momento especial
+
+    // Você pode adicionar mais imagens conforme necessário
+}
+
+// Opcional: Ajustar a mensagem final
+function setFinalMessage() {
+    // Personalize esta mensagem com suas próprias palavras de amor
+    finalMessageText = "Meu amor, cada momento ao seu lado é um presente. Desde o dia em que nos conhecemos, minha vida se transformou para melhor. Obrigado por todos os sorrisos, por todas as histórias e por todo o amor que compartilhamos. Você é a pessoa mais especial do mundo para mim e quero construir muitas mais memórias ao seu lado. Te amo infinitamente! ❤️";
+}
+
+// IMPORTANTE: Inicialize estas funções personalizadas antes de iniciar o jogo
+// customizeQuestions();
+//loadPersonalImages();
+setFinalMessage();
+        });
+    </script>
+</body>
+</html>
